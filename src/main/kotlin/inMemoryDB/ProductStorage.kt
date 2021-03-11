@@ -1,0 +1,4 @@
+package inMemoryDB
+
+class Products {
+}
