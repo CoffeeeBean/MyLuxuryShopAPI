@@ -1,0 +1,4 @@
+package dataRepository
+
+object EsClientBuilder {
+}
