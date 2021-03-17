@@ -6,21 +6,16 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class Product(
     val id: String,
-
-    @JsonProperty("shortDescription")
-    val shortDescription: String?,
-    @JsonProperty("editorDescription")
-    val editorDescription: String?,
-    val category: String?,
-    val brand: String?,
-    val sku: String?,
-    val variant: ProductVariant?,
-    @JsonProperty("unitPrice")
-    val unitPrice: Double?,
-    @JsonProperty("priceCurrency")
-    val priceCurrency: String?,
-    @JsonProperty("inStock")
-    val inStock: Boolean?
+    val shortDescription: String,
+    val editorDescription: String,
+    val category: String,
+    val brand: String,
+    val sku: String,
+    val variant: ProductVariant,
+    val unitPrice: Double,
+    val priceCurrency: String,
+    val inStock: Boolean,
+    val imageUrl: String?
 )
 
 @Serializable
