@@ -1,6 +1,10 @@
 package dataRepository
 
+import com.fasterxml.jackson.databind.ObjectMapper
+import com.fasterxml.jackson.databind.PropertyNamingStrategies
 import com.jetbrains.handson.httpapi.esClient
+import com.jillesvangurp.eskotlinwrapper.JacksonModelReaderAndWriter
+import com.jillesvangurp.eskotlinwrapper.ModelReaderAndWriter
 import com.jillesvangurp.eskotlinwrapper.SearchResults
 import com.jillesvangurp.eskotlinwrapper.dsl.match
 import com.jillesvangurp.eskotlinwrapper.dsl.matchAll
@@ -11,7 +15,16 @@ import org.elasticsearch.client.indexRepository
 class ProductRepository {
 
     fun getAllProducts(): SearchResults<Product> {
+        val objectMapper = ObjectMapper()
+        // enable Kotlin integration and whatever else is on the classpath
+        objectMapper.findAndRegisterModules()
+        // make sure we convert names with underscores properly to and
+        // from kotlin (camelCase)
+        objectMapper.propertyNamingStrategy = PropertyNamingStrategies.LOWER_CAMEL_CASE
         val productRepo = esClient.indexRepository<Product>("products", refreshAllowed = true)
+        esClient.use {
+            val customSerde = JacksonModelReaderAndWriter(Product::class, objectMapper)
+        }
 
         val results = productRepo.search {
             configure {
@@ -36,3 +49,5 @@ class ProductRepository {
         productRepo.index(product.id, product)
     }
 }
+
+
