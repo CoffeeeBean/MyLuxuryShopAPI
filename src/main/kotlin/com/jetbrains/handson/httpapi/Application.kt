@@ -15,6 +15,11 @@ fun Application.module(testing: Boolean = false) {
     install(ContentNegotiation) {
         json()
     }
+    install(CORS) {
+        header("Access-Control-Allow-Origin")
+        allowNonSimpleContentTypes = true
+        anyHost()
+    }
     registerProductRoutes()
 }
 
