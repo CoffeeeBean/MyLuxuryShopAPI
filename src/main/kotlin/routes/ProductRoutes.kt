@@ -27,7 +27,7 @@ fun Route.getSingleProductRoute() {
 fun Route.getProducts() {
     get("product/query/") {
         val productRepository = ProductRepository()
-        val allProducts = productRepository.getAllProducts()
+        val allProducts = productRepository.getProducts()
         val productToReturn = mutableListOf<Product>()
 
         allProducts.mappedHits.forEach { productToReturn.add(it) }

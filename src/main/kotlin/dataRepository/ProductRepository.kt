@@ -6,12 +6,19 @@ import com.jillesvangurp.eskotlinwrapper.dsl.match
 import com.jillesvangurp.eskotlinwrapper.dsl.matchAll
 import models.Product
 import org.elasticsearch.action.search.configure
+import org.elasticsearch.action.search.source
+import org.elasticsearch.client.Request
 import org.elasticsearch.client.indexRepository
 
 class ProductRepository {
 
-    fun getAllProducts(): SearchResults<Product> {
+    fun getProducts(jsonQuery : String? = ""): SearchResults<Product> {
         val productRepo = ProductIndexRepository.getProductIndexRepositoryInstance()
+        if(jsonQuery != ""){
+            return productRepo.search {
+                source(jsonQuery!!)
+            }
+        }
         return productRepo.search {
             configure {
                 query = matchAll()
