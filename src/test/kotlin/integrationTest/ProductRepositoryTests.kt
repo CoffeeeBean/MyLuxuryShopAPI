@@ -1,3 +1,5 @@
+package integrationTest
+
 import dataRepository.ProductIndexRepository
 import dataRepository.ProductRepository
 import io.kotest.core.spec.style.FunSpec
@@ -6,22 +8,23 @@ import models.Material
 import models.Product
 import models.ProductVariant
 
-class ProductRepositoryTest : FunSpec({
-    test("GetSingleProduct should return one Product when the product exist"){
+class ProductRepositoryTests : FunSpec({
+    test("GetSingleProduct should return one Product when the product exist") {
         val productRepository = ProductRepository()
         val productSearchResult = productRepository.getSingleProducts("200")
         productSearchResult.hits.count() shouldBe 1
         val product = productSearchResult.mappedHits.first()
         product.id shouldBe "200"
     }
-    test("GetProduct with empty json query should return all product"){
+    test("GetProduct with empty json query should return all product") {
         val productRepository = ProductRepository()
         val productSearchResult = productRepository.getProducts()
         productSearchResult.hits.count() shouldBe 3
     }
-    test("GetProduct with not empty json query should return filtered product"){
+    test("GetProduct with not empty json query should return filtered product") {
         val productRepository = ProductRepository()
-        val productSearchResult = productRepository.getProducts("{\n" +
+        val productSearchResult = productRepository.getProducts(
+            "{\n" +
                 "   \"query\": {\n" +
                 "     \"bool\" : {\n" +
                 "       \"filter\": [\n" +
@@ -30,13 +33,14 @@ class ProductRepositoryTest : FunSpec({
                 "       ]\n" +
                 "     }\n" +
                 "   }\n" +
-                " }")
+                " }"
+        )
         productSearchResult.hits.count() shouldBe 1
         val product = productSearchResult.mappedHits.first()
         product.variant.model shouldBe "Toe Bag"
         product.brand shouldBe "Valentino"
     }
-    test("insert product should insert a new product and return the new product id"){
+    test("insert product should insert a new product and return the new product id") {
         val productRepository = ProductRepository()
         val newProduct = Product(
             id = "newProductId",
@@ -54,10 +58,9 @@ class ProductRepositoryTest : FunSpec({
         val newProductId = productRepository.insertProduct(newProduct)
         newProductId shouldBe "newProductId"
 
-        //clean test data
+        // clean test data
         val productRepo = ProductIndexRepository.getProductIndexRepositoryInstance()
         productRepo.delete(newProductId)
-
     }
 }
 )
