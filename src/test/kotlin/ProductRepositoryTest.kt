@@ -1,6 +1,10 @@
+import dataRepository.ProductIndexRepository
 import dataRepository.ProductRepository
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.matchers.shouldBe
+import models.Material
+import models.Product
+import models.ProductVariant
 
 class ProductRepositoryTest : FunSpec({
     test("GetSingleProduct should return one Product when the product exist"){
@@ -31,6 +35,29 @@ class ProductRepositoryTest : FunSpec({
         val product = productSearchResult.mappedHits.first()
         product.variant.model shouldBe "Toe Bag"
         product.brand shouldBe "Valentino"
+    }
+    test("insert product should insert a new product and return the new product id"){
+        val productRepository = ProductRepository()
+        val newProduct = Product(
+            id = "newProductId",
+            shortDescription = "Le Petit Bambino suede tote",
+            editorDescription = "Le Petit Bambino suede tote cross body bag.",
+            category = "Cross Body Bag",
+            brand = "Jacquemus",
+            sku = "SKU0000001",
+            variant = ProductVariant(model = "Cross Body Bag", color = "Blue", materials = listOf(Material(description = "Blue suede"), Material("Leather")), size = "U", gender = "Woman"),
+            unitPrice = 350.50,
+            priceCurrency = "EUR",
+            inStock = true,
+            imageUrl = "https://image/image.jpg"
+        )
+        val newProductId = productRepository.insertProduct(newProduct)
+        newProductId shouldBe "newProductId"
+
+        //clean test data
+        val productRepo = ProductIndexRepository.getProductIndexRepositoryInstance()
+        productRepo.delete(newProductId)
+
     }
 }
 )
