@@ -52,9 +52,9 @@ class ProductRouteTests : FunSpec({
             }
         }
     }
-    test("GetProducts given a json filter should return filtered products") {
+    test("GetProducts given a json filter should return a list of products") {
         withTestApplication({ module(testing = true) }) {
-            handleRequest(HttpMethod.Post, "product/query/") {
+            handleRequest(HttpMethod.Post, "product/query") {
                 // addHeader("Accept", "text/plain")
                 addHeader("Content-Type", "application/json")
                 setBody(
@@ -77,6 +77,41 @@ class ProductRouteTests : FunSpec({
                     product.brand shouldBe "BURBERRY"
                 }
                 response.status() shouldBe HttpStatusCode.OK
+            }
+        }
+    }
+    test("AddProduct should return confirmation message") {
+        withTestApplication({ module(testing = true) }) {
+            handleRequest(HttpMethod.Post, "product/add") {
+                addHeader("Content-Type", "application/json")
+                setBody(
+                    """{
+                        "id": "99999",
+                        "shortDescription": "Leather-trimmed printed coated-canvas tote",
+                        "editorDescription": "Elegant and timeless in its simplicity, Burberry's tote is a worthy wardrobe investment. Trimmed with leather, it's made from coated-canvas in a generous hold-all size and patterned with the 'TB' monogram originally created by Riccardo Tisci and Peter Saville.",
+                        "category": "Bag",
+                        "brand": "BURBERRY",
+                        "sku": "SKU000555",
+                        "variant": {
+                            "model": "Toe Bag",
+                            "color": "Brown",
+                            "materials": [
+                                {
+                                    "description": "Tan textured-leather "
+                                }
+                            ],
+                            "size": "U",
+                            "gender": "Woman"
+                        },
+                        "unitPrice": 980,
+                        "priceCurrency": "EUR",
+                        "inStock": true,
+                        "imageUrl": "https://cache.net-a-porter.com/images/products/1248519/1248519_in_920_q80.jpg"
+                    }"""
+                )
+            }.apply {
+                response.status() shouldBe HttpStatusCode.OK
+                response.content!! shouldBe "New product added id=99999"
             }
         }
     }

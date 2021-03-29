@@ -25,7 +25,7 @@ fun Route.getSingleProductRoute() {
 }
 
 fun Route.getProducts() {
-    post("product/query/") {
+    post("product/query") {
         val params = call.receive<String>()
         val productRepository = ProductRepository()
         val allProducts = productRepository.getProducts(params)
@@ -40,7 +40,7 @@ fun Route.addProduct() {
     post("/product/add") {
         val product = call.receive<Product>()
         val productRepository = ProductRepository()
-        productRepository.insertProduct(product)
-        call.respondText("New product added", status = HttpStatusCode.Accepted)
+        val newProductId = productRepository.insertProduct(product)
+        call.respondText("New product added id=$newProductId", status = HttpStatusCode.OK)
     }
 }
