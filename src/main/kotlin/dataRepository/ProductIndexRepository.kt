@@ -1,12 +1,12 @@
 package dataRepository
 
 import com.fasterxml.jackson.databind.ObjectMapper
-import com.jetbrains.handson.httpapi.esClient
 import com.jillesvangurp.eskotlinwrapper.CustomModelReaderAndWriter
 import com.jillesvangurp.eskotlinwrapper.IndexRepository
 import models.Product
 import org.elasticsearch.client.indexRepository
 
+@Deprecated("use inner class instead")
 object ProductIndexRepository {
 
     fun getProductIndexRepositoryInstance(): IndexRepository<Product> {
@@ -14,6 +14,7 @@ object ProductIndexRepository {
             Product::class,
             ObjectMapper().findAndRegisterModules()
         )
-        return esClient.indexRepository("products", modelReaderAndWriter = modelReaderAndWriter)
+
+        return EsClientBuilder.restHighLevelClient.indexRepository("products", modelReaderAndWriter = modelReaderAndWriter)
     }
 }

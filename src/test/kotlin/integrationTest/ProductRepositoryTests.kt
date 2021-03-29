@@ -1,5 +1,6 @@
 package integrationTest
 
+import dataRepository.EsClientBuilder
 import dataRepository.ProductIndexRepository
 import dataRepository.ProductRepository
 import io.kotest.core.spec.style.FunSpec
@@ -10,19 +11,19 @@ import models.ProductVariant
 
 class ProductRepositoryTests : FunSpec({
     test("GetSingleProduct should return one Product when the product exist") {
-        val productRepository = ProductRepository()
+        val productRepository = ProductRepository(EsClientBuilder.restHighLevelClient)
         val productSearchResult = productRepository.getSingleProducts("200")
         productSearchResult.hits.count() shouldBe 1
         val product = productSearchResult.mappedHits.first()
         product.id shouldBe "200"
     }
     test("GetProduct with empty json query should return all product") {
-        val productRepository = ProductRepository()
+        val productRepository = ProductRepository(EsClientBuilder.restHighLevelClient)
         val productSearchResult = productRepository.getProducts()
         productSearchResult.hits.count() shouldBe 3
     }
     test("GetProduct with not empty json query should return filtered product") {
-        val productRepository = ProductRepository()
+        val productRepository = ProductRepository(EsClientBuilder.restHighLevelClient)
         val productSearchResult = productRepository.getProducts(
             "{\n" +
                 "   \"query\": {\n" +
@@ -41,7 +42,7 @@ class ProductRepositoryTests : FunSpec({
         product.brand shouldBe "Valentino"
     }
     test("insert product should insert a new product and return the new product id") {
-        val productRepository = ProductRepository()
+        val productRepository = ProductRepository(EsClientBuilder.restHighLevelClient)
         val newProduct = Product(
             id = "newProductId",
             shortDescription = "Le Petit Bambino suede tote",

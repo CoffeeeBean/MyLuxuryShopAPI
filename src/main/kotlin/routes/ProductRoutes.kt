@@ -1,5 +1,6 @@
 package routes
 
+import dataRepository.EsClientBuilder
 import dataRepository.ProductRepository
 import io.ktor.application.*
 import io.ktor.http.*
@@ -11,7 +12,7 @@ import models.Product
 fun Route.getSingleProductRoute() {
     get("/product/{id}") {
         val id = call.parameters["id"] ?: return@get call.respondText("Bad Request", status = HttpStatusCode.BadRequest)
-        val productRepository = ProductRepository()
+        val productRepository = ProductRepository(EsClientBuilder.restHighLevelClient)
         val productSearchResult = productRepository.getSingleProducts(id)
         if (productSearchResult.hits.count() == 0) {
             return@get call.respondText(
@@ -27,7 +28,7 @@ fun Route.getSingleProductRoute() {
 fun Route.getProducts() {
     post("product/query") {
         val params = call.receive<String>()
-        val productRepository = ProductRepository()
+        val productRepository = ProductRepository(EsClientBuilder.restHighLevelClient)
         val allProducts = productRepository.getProducts(params)
         val productToReturn = mutableListOf<Product>()
 
@@ -39,7 +40,7 @@ fun Route.getProducts() {
 fun Route.addProduct() {
     post("/product/add") {
         val product = call.receive<Product>()
-        val productRepository = ProductRepository()
+        val productRepository = ProductRepository(EsClientBuilder.restHighLevelClient)
         val newProductId = productRepository.insertProduct(product)
         call.respondText("New product added id=$newProductId", status = HttpStatusCode.OK)
     }
