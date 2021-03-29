@@ -21,6 +21,7 @@ dependencies {
     implementation "ch.qos.logback:logback-classic:$logback_version"
     implementation "io.ktor:ktor-serialization:$ktor_version"
     implementation "org.jetbrains.kotlinx:kotlinx-serialization-core:$kotlin_serialization"
+    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.1.0")
     implementation "com.github.jillesvangurp:es-kotlin-client:1.0.2"
     implementation 'com.fasterxml.jackson.core:jackson-annotations:2.12.1'
     implementation 'com.fasterxml.jackson.module:jackson-module-kotlin:2.12.1'
