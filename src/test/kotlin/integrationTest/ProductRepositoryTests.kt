@@ -1,17 +1,42 @@
 package integrationTest
 
+import com.fasterxml.jackson.databind.ObjectMapper
+import com.jillesvangurp.eskotlinwrapper.CustomModelReaderAndWriter
 import dataRepository.EsClientBuilder
 import dataRepository.ProductIndexRepository
 import dataRepository.ProductRepository
+import inMemoryDB.productStorage
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.matchers.shouldBe
 import models.Material
 import models.Product
 import models.ProductVariant
+import org.apache.http.HttpHost
+import org.elasticsearch.client.RestClient
+import org.elasticsearch.client.RestHighLevelClient
+import org.elasticsearch.client.indexRepository
+import org.testcontainers.elasticsearch.ElasticsearchContainer
 
 class ProductRepositoryTests : FunSpec({
+
+    var esContainer: ElasticsearchContainer = ElasticsearchContainer()
+    beforeSpec{
+        esContainer = ElasticsearchContainer("docker.elastic.co/elasticsearch/elasticsearch:7.9.3")
+        esContainer.start()
+        val testEsClient = RestHighLevelClient(RestClient.builder(HttpHost.create(esContainer.httpHostAddress)))
+
+        val modelReaderAndWriter = CustomModelReaderAndWriter(
+            Product::class,
+            ObjectMapper().findAndRegisterModules()
+        )
+        val productRepo = testEsClient.indexRepository("products", modelReaderAndWriter = modelReaderAndWriter)
+        productRepo.index(id = "200", productStorage[0])
+
+    }
+
+
     test("GetSingleProduct should return one Product when the product exist") {
-        val productRepository = ProductRepository(EsClientBuilder.restHighLevelClient)
+        val productRepository = ProductRepository(RestHighLevelClient(RestClient.builder(HttpHost.create(esContainer.httpHostAddress))))
         val productSearchResult = productRepository.getSingleProducts("200")
         productSearchResult.hits.count() shouldBe 1
         val product = productSearchResult.mappedHits.first()

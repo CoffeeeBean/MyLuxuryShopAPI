@@ -31,6 +31,7 @@ dependencies {
     testImplementation "io.ktor:ktor-server-tests:$ktor_version"
     testImplementation "io.kotest:kotest-runner-junit5:$kotest_version"
     testImplementation "io.kotest:kotest-assertions-core:$kotest_version"
+    testImplementation "org.testcontainers:elasticsearch:1.15.1"
     // https://mvnrepository.com/artifact/io.kotest/kotest-assertions-json-jvm
     implementation group: 'io.kotest', name: 'kotest-assertions-json-jvm', version: '4.4.3'
 

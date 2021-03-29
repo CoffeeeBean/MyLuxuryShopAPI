@@ -4,7 +4,7 @@ import models.*
 
 val productStorage = mutableListOf(
     Product(
-        id = "100",
+        id = "200",
         shortDescription = "Le Petit Bambino suede tote",
         editorDescription = "Le Petit Bambino suede tote cross body bag.",
         category = "Cross Body Bag",
