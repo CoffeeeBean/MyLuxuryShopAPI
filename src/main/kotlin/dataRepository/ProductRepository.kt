@@ -12,17 +12,17 @@ import org.elasticsearch.client.indexRepository
 
 class ProductRepository(elasticRestHighLevelClient: RestHighLevelClient) {
 
-    private val elasticRestHighLevelClient= elasticRestHighLevelClient
-    private val productIndexRepository= ProductIndexRepository()
+    private val elasticRestHighLevelClient = elasticRestHighLevelClient
+    private val productIndexRepository = ProductIndexRepository()
 
-    private inner class ProductIndexRepository{
-            fun getProductIndexRepositoryInstance(): IndexRepository<Product> {
-                val modelReaderAndWriter = CustomModelReaderAndWriter(
-                    Product::class,
-                    ObjectMapper().findAndRegisterModules()
-                )
-                return this@ProductRepository.elasticRestHighLevelClient.indexRepository("products", modelReaderAndWriter = modelReaderAndWriter)
-            }
+    private inner class ProductIndexRepository {
+        fun getProductIndexRepositoryInstance(): IndexRepository<Product> {
+            val modelReaderAndWriter = CustomModelReaderAndWriter(
+                Product::class,
+                ObjectMapper().findAndRegisterModules()
+            )
+            return this@ProductRepository.elasticRestHighLevelClient.indexRepository("products", modelReaderAndWriter = modelReaderAndWriter)
+        }
     }
 
     fun getProducts(jsonQuery: String? = ""): SearchResults<Product> {

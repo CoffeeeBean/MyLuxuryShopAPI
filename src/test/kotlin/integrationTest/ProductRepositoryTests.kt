@@ -2,10 +2,8 @@ package integrationTest
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.jillesvangurp.eskotlinwrapper.CustomModelReaderAndWriter
-import dataRepository.EsClientBuilder
-import dataRepository.ProductIndexRepository
 import dataRepository.ProductRepository
-import inMemoryDB.productStorage
+import integrationTest.testData.ProductsTestData
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.matchers.shouldBe
 import models.Material
@@ -19,36 +17,39 @@ import org.testcontainers.elasticsearch.ElasticsearchContainer
 
 class ProductRepositoryTests : FunSpec({
 
-    var esContainer: ElasticsearchContainer = ElasticsearchContainer()
-    beforeSpec{
-        esContainer = ElasticsearchContainer("docker.elastic.co/elasticsearch/elasticsearch:7.9.3")
+    var testEsRestHighLevelClient : RestHighLevelClient? = null
+    beforeSpec {
+        val esContainer = ElasticsearchContainer("docker.elastic.co/elasticsearch/elasticsearch:7.9.3")
         esContainer.start()
-        val testEsClient = RestHighLevelClient(RestClient.builder(HttpHost.create(esContainer.httpHostAddress)))
+        testEsRestHighLevelClient = RestHighLevelClient(RestClient.builder(HttpHost.create(esContainer.httpHostAddress)))
 
         val modelReaderAndWriter = CustomModelReaderAndWriter(
             Product::class,
             ObjectMapper().findAndRegisterModules()
         )
-        val productRepo = testEsClient.indexRepository("products", modelReaderAndWriter = modelReaderAndWriter)
-        productRepo.index(id = "200", productStorage[0])
+        val productIndexRepository = testEsRestHighLevelClient!!.indexRepository("products", modelReaderAndWriter = modelReaderAndWriter)
 
+        productIndexRepository.bulk {
+            ProductsTestData.getProductTestData().entries.forEach() {
+                index(it.key, it.value)
+            }
+        }
     }
 
-
     test("GetSingleProduct should return one Product when the product exist") {
-        val productRepository = ProductRepository(RestHighLevelClient(RestClient.builder(HttpHost.create(esContainer.httpHostAddress))))
+        val productRepository = ProductRepository(testEsRestHighLevelClient!!)
         val productSearchResult = productRepository.getSingleProducts("200")
         productSearchResult.hits.count() shouldBe 1
         val product = productSearchResult.mappedHits.first()
         product.id shouldBe "200"
     }
     test("GetProduct with empty json query should return all product") {
-        val productRepository = ProductRepository(EsClientBuilder.restHighLevelClient)
+        val productRepository = ProductRepository(testEsRestHighLevelClient!!)
         val productSearchResult = productRepository.getProducts()
-        productSearchResult.hits.count() shouldBe 3
+        productSearchResult.hits.count() shouldBe 4
     }
     test("GetProduct with not empty json query should return filtered product") {
-        val productRepository = ProductRepository(EsClientBuilder.restHighLevelClient)
+        val productRepository = ProductRepository(testEsRestHighLevelClient!!)
         val productSearchResult = productRepository.getProducts(
             "{\n" +
                 "   \"query\": {\n" +
@@ -67,7 +68,7 @@ class ProductRepositoryTests : FunSpec({
         product.brand shouldBe "Valentino"
     }
     test("insert product should insert a new product and return the new product id") {
-        val productRepository = ProductRepository(EsClientBuilder.restHighLevelClient)
+        val productRepository = ProductRepository(testEsRestHighLevelClient!!)
         val newProduct = Product(
             id = "newProductId",
             shortDescription = "Le Petit Bambino suede tote",
@@ -84,9 +85,6 @@ class ProductRepositoryTests : FunSpec({
         val newProductId = productRepository.insertProduct(newProduct)
         newProductId shouldBe "newProductId"
 
-        // clean test data
-        val productRepo = ProductIndexRepository.getProductIndexRepositoryInstance()
-        productRepo.delete(newProductId)
     }
 }
 )
