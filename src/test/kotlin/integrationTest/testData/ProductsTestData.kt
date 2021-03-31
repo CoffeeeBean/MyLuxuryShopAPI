@@ -1,6 +1,4 @@
 package integrationTest.testData
-
-import models.Material
 import models.Product
 import models.ProductVariant
 
@@ -19,7 +17,7 @@ class ProductsTestData {
                 category = "Cross Body Bag",
                 brand = "Jacquemus",
                 sku = "SKU0000001",
-                variant = ProductVariant(model = "Cross Body Bag", color = "Blue", materials = listOf(Material(description = "Blue suede"), Material("Leather")), size = "U", gender = "Woman"),
+                variant = ProductVariant(model = "Cross Body Bag", color = "Blue", materials = "Blue suede", size = "U", gender = "Woman"),
                 unitPrice = 350.50,
                 priceCurrency = "EUR",
                 inStock = true,
@@ -35,7 +33,7 @@ class ProductsTestData {
                 variant = ProductVariant(
                     model = "High Heel",
                     color = "Blue",
-                    materials = listOf(Material(description = "White leather"), Material("Leather")),
+                    materials = "White leather",
                     size = "7",
                     gender = "Woman"
                 ),
@@ -54,7 +52,7 @@ class ProductsTestData {
                 variant = ProductVariant(
                     model = "High Heel",
                     color = "Blue",
-                    materials = listOf(Material(description = "White leather"), Material("Leather")),
+                    materials = "White leather",
                     size = "8",
                     gender = "Woman"
                 ),
@@ -73,7 +71,7 @@ class ProductsTestData {
                 variant = ProductVariant(
                     model = "Toe Bag",
                     color = "Blue",
-                    materials = listOf(Material(description = "White leather"), Material("Leather")),
+                    materials = "White leather",
                     size = "8",
                     gender = "Woman"
                 ),

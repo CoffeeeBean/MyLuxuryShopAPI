@@ -10,7 +10,7 @@ val productStorage = mutableListOf(
         category = "Cross Body Bag",
         brand = "Jacquemus",
         sku = "SKU0000001",
-        variant = ProductVariant(model = "Cross Body Bag", color = "Blue", materials = listOf(Material(description = "Blue suede"), Material("Leather")), size = "U", gender = "Woman"),
+        variant = ProductVariant(model = "Cross Body Bag", color = "Blue", materials = "Blue suede", size = "U", gender = "Woman"),
         unitPrice = 350.50,
         priceCurrency = "EUR",
         inStock = true,

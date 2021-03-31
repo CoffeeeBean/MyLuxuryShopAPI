@@ -6,7 +6,6 @@ import dataRepository.ProductRepository
 import integrationTest.testData.ProductsTestData
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.matchers.shouldBe
-import models.Material
 import models.Product
 import models.ProductVariant
 import org.apache.http.HttpHost
@@ -76,7 +75,7 @@ class ProductRepositoryTests : FunSpec({
             category = "Cross Body Bag",
             brand = "Jacquemus",
             sku = "SKU0000001",
-            variant = ProductVariant(model = "Cross Body Bag", color = "Blue", materials = listOf(Material(description = "Blue suede"), Material("Leather")), size = "U", gender = "Woman"),
+            variant = ProductVariant(model = "Cross Body Bag", color = "Blue", materials = "Blue suede", size = "U", gender = "Woman"),
             unitPrice = 350.50,
             priceCurrency = "EUR",
             inStock = true,

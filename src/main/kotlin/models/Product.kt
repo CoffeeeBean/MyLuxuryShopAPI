@@ -18,7 +18,4 @@ data class Product(
 )
 
 @Serializable
-data class ProductVariant(val model: String, val color: String, val materials: List<Material>, val size: String, val gender: String)
-
-@Serializable
-data class Material(val description: String)
+data class ProductVariant(val model: String, val color: String, val materials: String, val size: String, val gender: String)
