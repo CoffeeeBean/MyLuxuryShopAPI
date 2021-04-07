@@ -9,19 +9,29 @@ import io.ktor.response.*
 import io.ktor.routing.*
 import models.Product
 
+fun Route.getHealthStatus(){
+    get("/health") {
+        call.respondText("Healthy!")
+    }
+}
 fun Route.getSingleProductRoute() {
     get("/product/{id}") {
         val id = call.parameters["id"] ?: return@get call.respondText("Bad Request", status = HttpStatusCode.BadRequest)
-        val productRepository = ProductRepository(EsClientBuilder.restHighLevelClient)
-        val productSearchResult = productRepository.getSingleProducts(id)
-        if (productSearchResult.hits.count() == 0) {
-            return@get call.respondText(
-                "Not Found",
-                status = HttpStatusCode.NotFound
-            )
+        try{
+            val productRepository = ProductRepository(EsClientBuilder.restHighLevelClient)
+            val productSearchResult = productRepository.getSingleProducts(id)
+            if (productSearchResult.hits.count() == 0) {
+                return@get call.respondText(
+                    "Not Found",
+                    status = HttpStatusCode.NotFound
+                )
+            }
+            val product = productSearchResult.mappedHits.first()
+            call.respond(product)
+        }catch (e: Exception){
+            return@get call.respondText(e.stackTraceToString(), status = HttpStatusCode.InternalServerError)
         }
-        val product = productSearchResult.mappedHits.first()
-        call.respond(product)
+
     }
 }
 

@@ -11,19 +11,25 @@ import routes.*
 fun main(args: Array<String>): Unit = io.ktor.server.netty.EngineMain.main(args)
 
 fun Application.module(testing: Boolean = false) {
-    install(ContentNegotiation) {
-        json()
+    try {
+        install(ContentNegotiation) {
+            json()
+        }
+        install(CORS) {
+            header("Access-Control-Allow-Origin")
+            allowNonSimpleContentTypes = true
+            anyHost()
+        }
+        registerProductRoutes()
+    }catch (e: Exception){
+        System.console().printf(e.stackTraceToString())
     }
-    install(CORS) {
-        header("Access-Control-Allow-Origin")
-        allowNonSimpleContentTypes = true
-        anyHost()
-    }
-    registerProductRoutes()
+
 }
 
 fun Application.registerProductRoutes() {
     routing {
+        getHealthStatus()
         getSingleProductRoute()
         addProduct()
         getProducts()
