@@ -1,8 +1,8 @@
 package models
 
-import kotlinx.serialization.Serializable
+import com.fasterxml.jackson.annotation.JsonInclude
 
-@Serializable
+@JsonInclude(JsonInclude.Include.NON_NULL)
 data class Product(
     val id: String,
     val shortDescription: String,
@@ -17,5 +17,10 @@ data class Product(
     val imageUrl: String?
 )
 
-@Serializable
-data class ProductVariant(val model: String, val color: String, val materials: String, val size: String, val gender: String)
+data class ProductVariant(
+    val model: String,
+    val color: String,
+    val materials: String,
+    val size: String,
+    val gender: String
+)

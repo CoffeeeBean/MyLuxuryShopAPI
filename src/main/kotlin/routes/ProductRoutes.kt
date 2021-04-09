@@ -2,6 +2,7 @@ package routes
 
 import dataRepository.EsClientBuilder
 import dataRepository.ProductRepository
+import dataRepository.ProductsRepository
 import io.ktor.application.*
 import io.ktor.http.*
 import io.ktor.request.*
@@ -11,9 +12,27 @@ import models.Product
 
 fun Route.getHealthStatus(){
     get("/health") {
-        call.respondText("Healthy!")
+        call.respondText("The API is Healthy!")
     }
 }
+
+fun Route.getProduct() {
+    get("/products/{id}") {
+        val productsRepository = ProductsRepository()
+        try {
+            val id = call.parameters["id"]!!
+            val product = productsRepository.getProduct(id)
+            if (product != null)
+                call.respond(HttpStatusCode.OK, product)
+            else
+                call.respond(HttpStatusCode.NotFound)
+        } catch (ex: Exception) {
+            println("Exception: ${ex.message}") //add logger here
+            call.respond(HttpStatusCode.InternalServerError)
+        }
+    }
+}
+
 fun Route.getSingleProductRoute() {
     get("/product/{id}") {
         val id = call.parameters["id"] ?: return@get call.respondText("Bad Request", status = HttpStatusCode.BadRequest)
