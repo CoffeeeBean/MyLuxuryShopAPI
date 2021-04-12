@@ -1,7 +1,7 @@
 node {
     checkout scm
 
-    docker.withRegistry('https://hub.docker.com/', 'dockerHub') {
+    docker.withRegistry('https://index.docker.io/', 'dockerHub') {
 
         def customImage = docker.build("luxuryshopapi:${env.BUILD_ID}")
 
